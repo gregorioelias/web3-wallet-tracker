@@ -9,7 +9,9 @@ export default function WalletViewer() {
 
   async function fetchWallet() {
 
-    const res = await fetch(`http://localhost:3000/wallet/${address}`);
+    const res = await fetch(
+      `http://localhost:4000/wallet/${address}`
+    );
 
     const json = await res.json();
 
@@ -18,33 +20,76 @@ export default function WalletViewer() {
   }
 
   return (
-    <div className="p-6">
 
-      <h1 className="text-2xl font-bold mb-4">
-        Wallet Tracker
+    <div className="p-10">
+
+      <h1 className="text-3xl font-bold mb-6">
+        Web3 Wallet Tracker
       </h1>
 
-      <input
-        className="border p-2 mr-2"
-        placeholder="Enter wallet address"
-        value={address}
-        onChange={(e)=>setAddress(e.target.value)}
-      />
+      <div className="mb-6">
 
-      <button
-        className="bg-blue-500 text-white p-2"
-        onClick={fetchWallet}
-      >
-        Search
-      </button>
+        <input
+          className="border p-2 mr-2 w-96"
+          placeholder="Enter wallet address"
+          value={address}
+          onChange={(e)=>setAddress(e.target.value)}
+        />
+
+        <button
+          className="bg-blue-500 text-white p-2 px-4"
+          onClick={fetchWallet}
+        >
+          Search
+        </button>
+
+      </div>
 
       {data && (
-        <pre className="mt-6">
-          {JSON.stringify(data, null, 2)}
-        </pre>
+
+        <div>
+
+          <h2 className="text-xl mb-4">
+            ETH Balance: {data.ethBalance}
+          </h2>
+
+          <h3 className="text-lg font-semibold mb-2">
+            Tokens
+          </h3>
+
+          <div className="grid grid-cols-3 gap-4">
+
+            {data.tokens.map((token, index) => (
+
+              <div
+                key={index}
+                className="border p-4 rounded"
+              >
+
+                <p className="font-bold">
+                  {token.symbol}
+                </p>
+
+                <p>
+                  {token.name}
+                </p>
+
+                <p className="text-sm text-gray-500">
+                  {token.balance}
+                </p>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
       )}
 
     </div>
+
   );
 
 }
