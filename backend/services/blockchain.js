@@ -52,7 +52,7 @@ async function getTokenBalances(address) {
     // filtrar tokens basura
     if (!meta.result.symbol) continue;
     if (meta.result.name?.toLowerCase().includes("metaverse"))
-    continue;
+      continue;
     if (readableBalance <= 0) continue;
 
     results.push({

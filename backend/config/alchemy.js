@@ -1,5 +1,5 @@
-const ALCHEMY_URL = "https://eth-mainnet.g.alchemy.com/v2/kwh9wGJQ-LPVs6QLNkuKm"
+require("dotenv").config();
 
-module.exports = {
-  ALCHEMY_URL
-};
+const ALCHEMY_URL=process.env.ALCHEMY_URL;
+
+module.exports = { ALCHEMY_URL };
