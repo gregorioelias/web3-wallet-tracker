@@ -21,7 +21,7 @@ export default function WalletViewer() {
 
   return (
 
-    <div className="p-10">
+     <div className="max-w-3xl mx-auto p-10">
 
       <h1 className="text-3xl font-bold mb-6">
         Web3 Wallet Tracker
@@ -33,7 +33,7 @@ export default function WalletViewer() {
           className="border p-2 mr-2 w-96"
           placeholder="Enter wallet address"
           value={address}
-          onChange={(e)=>setAddress(e.target.value)}
+          onChange={(e) => setAddress(e.target.value)}
         />
 
         <button
@@ -49,8 +49,10 @@ export default function WalletViewer() {
 
         <div>
 
-          <h2 className="text-xl mb-4">
-            ETH Balance: {data.ethBalance}
+          <h2>
+            ETH Balance: {Number(data.ethBalance).toLocaleString(undefined, {
+              maximumFractionDigits: 2
+            })} ETH
           </h2>
 
           <h3 className="text-lg font-semibold mb-2">
@@ -59,24 +61,27 @@ export default function WalletViewer() {
 
           <div className="grid grid-cols-3 gap-4">
 
-            {data.tokens.map((token, index) => (
+            {data.tokens.map((token, i) => (
 
               <div
-                key={index}
-                className="border p-4 rounded"
+                key={i}
+                className="border p-4 rounded-lg mb-3 bg-gray-900"
               >
 
-                <p className="font-bold">
-                  {token.symbol}
-                </p>
+                <div className="flex justify-between">
 
-                <p>
-                  {token.name}
-                </p>
+                  <div>
+                    <p className="font-bold">{token.symbol}</p>
+                    <p className="text-gray-400 text-sm">
+                      {token.name}
+                    </p>
+                  </div>
 
-                <p className="text-sm text-gray-500">
-                  {token.balance}
-                </p>
+                  <div className="font-mono">
+                    {token.balance}
+                  </div>
+
+                </div>
 
               </div>
 
