@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function WalletViewer() {
 
   const [address, setAddress] = useState("");
   const [data, setData] = useState(null);
+  const [whales, setWhales] = useState([]);
+  const [newTokens, setNewTokens] = useState([]);
+  const [transfers, setTransfers] = useState([]);
 
   async function fetchWallet() {
 
@@ -17,11 +20,53 @@ export default function WalletViewer() {
 
     setData(json);
 
+    fetchTransfers(address);
+
+  }
+
+  async function fetchWhales() {
+
+    const res = await fetch(
+      "http://localhost:4000/wallet/whales"
+    );
+
+    const json = await res.json();
+
+    setWhales(json);
+  }
+
+  useEffect(() => {
+    fetchWhales();
+    fetchNewTokens();
+  }, []);
+
+  async function fetchTransfers(addr) {
+
+    const res = await fetch(
+      `http://localhost:4000/wallet/${addr}/transfers`
+    );
+
+    const json = await res.json();
+
+    setTransfers(json);
+
+  }
+
+  async function fetchNewTokens() {
+
+    const res = await fetch(
+      "http://localhost:4000/wallet/tokens/new"
+    );
+
+    const json = await res.json();
+
+    setNewTokens(json);
+
   }
 
   return (
 
-     <div className="max-w-3xl mx-auto p-10">
+    <div className="max-w-3xl mx-auto p-10">
 
       <h1 className="text-3xl font-bold mb-6">
         Web3 Wallet Tracker
@@ -88,6 +133,84 @@ export default function WalletViewer() {
             ))}
 
           </div>
+
+          <h2 className="text-xl font-bold mt-10 mb-4">
+            Recent Transfers
+          </h2>
+
+          <div className="max-h-64 overflow-y-auto">
+
+            {transfers.map((t, i) => (
+
+              <div
+                key={i}
+                className="border p-3 rounded mb-2"
+              >
+
+                <p>
+                  {Number(t.value).toFixed(4)} {t.asset}
+                </p>
+
+                <p className="text-sm text-gray-400">
+                  → {t.to.slice(0, 6)}
+                </p>
+
+              </div>
+
+            ))}
+
+
+          </div>
+
+          <h2 className="text-xl font-bold mt-10 mb-4">
+            Whale Activity
+          </h2>
+
+          {whales.map((w, i) => (
+
+            <div
+              key={i}
+              className="border p-3 rounded mb-2"
+            >
+
+              <p>
+                {Number(w.value).toFixed(2)} ETH
+              </p>
+
+              <p className="text-sm text-gray-400">
+                {w.from.slice(0, 6)} → {w.to.slice(0, 6)}
+              </p>
+
+            </div>
+
+          ))}
+
+          <h2 className="text-xl font-bold mt-10 mb-4">
+            New Tokens
+          </h2>
+          
+           <div className="max-h-64 overflow-y-auto">
+
+          {newTokens.map((t, i) => (
+
+            <div
+              key={i}
+              className="border p-3 rounded mb-2"
+            >
+
+              <p className="font-bold">
+                {t.token}
+              </p>
+
+              <p className="text-sm text-gray-400">
+                {t.contract?.slice(0, 10)}
+              </p>
+
+            </div>
+
+          ))}
+
+        </div>
 
         </div>
 

@@ -2,10 +2,22 @@ const express = require("express");
 
 const {
   getETHBalance,
-  getTokenBalances
+  getTokenBalances,
+  getWhaleTransfers,
+  getNewTokens,
+  getRecentTransfers
 } = require("../services/blockchain");
 
 const router = express.Router();
+
+router.get("/whales", async (req, res) => {
+
+  const whales = await getWhaleTransfers();
+
+  res.json(whales);
+
+});
+
 
 router.get("/:address", async (req, res) => {
 
@@ -32,5 +44,25 @@ router.get("/:address", async (req, res) => {
   }
 
 });
+
+router.get("/tokens/new", async (req, res) => {
+
+  const tokens = await getNewTokens();
+
+  res.json(tokens);
+
+});
+
+router.get("/:address/transfers", async (req, res) => {
+
+  const address = req.params.address;
+
+  const transfers = await getRecentTransfers(address);
+
+  res.json(transfers);
+
+});
+
+
 
 module.exports = router;

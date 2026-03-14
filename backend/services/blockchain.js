@@ -66,7 +66,85 @@ async function getTokenBalances(address) {
   return results;
 }
 
+async function getWhaleTransfers() {
+
+  const data = await rpcRequest(
+    "alchemy_getAssetTransfers",
+    [{
+      fromBlock: "0x0",
+      category: ["external"],
+      maxCount: "0x32",
+      order: "desc"
+    }]
+  );
+
+  const transfers = data.result.transfers;
+
+  const whales = transfers
+    .map(t => ({
+      from: t.from,
+      to: t.to,
+      value: parseFloat(t.value),
+      hash: t.hash,
+      block: t.blockNum
+    }))
+    .filter(t => t.value > 1)
+
+  return whales;
+
+}
+
+async function getNewTokens() {
+
+  const data = await rpcRequest(
+    "alchemy_getAssetTransfers",
+    [{
+      fromBlock: "0x0",
+      category: ["erc20"],
+      maxCount: "0x14",
+      order: "desc"
+    }]
+  );
+
+  const transfers = data.result.transfers;
+
+  const tokens = transfers.map(t => ({
+    token: t.asset,
+    contract: t.rawContract?.address
+  }));
+
+  return tokens;
+}
+
+async function getRecentTransfers(address) {
+
+  const data = await rpcRequest(
+    "alchemy_getAssetTransfers",
+    [{
+      fromBlock: "0x0",
+      fromAddress: address,
+      category: ["external", "erc20"],
+      maxCount: "0xA",
+      order: "desc"
+    }]
+  );
+
+  const transfers = data.result.transfers;
+
+  const results = transfers.map(t => ({
+    asset: t.asset,
+    value: t.value,
+    to: t.to,
+    hash: t.hash
+  }));
+
+  return results;
+}
+
 module.exports = {
   getETHBalance,
-  getTokenBalances
+  getTokenBalances,
+  getWhaleTransfers,
+  getNewTokens,
+  getRecentTransfers
 };
